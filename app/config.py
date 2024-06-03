@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     REDIS_PORT: int
 
     class Config:
-        env_file = ".env"
+        env_file = "D:/Reps/NetShop/app/.env"
 
 
 settings = Settings()

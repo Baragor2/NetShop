@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Boolean, LargeBinary
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -11,3 +12,5 @@ class Users(Base):
     password = Column(LargeBinary, nullable=False)
     role = Column(String, nullable=False)
     active = Column(Boolean, nullable=False)
+
+#    cart_item = relationship('CartItems', back_populates='user')

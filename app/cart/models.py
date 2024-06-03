@@ -1,14 +1,16 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-from app.products.models import Products
 
 
-class Carts(Base):
-    __tablename__ = 'carts'
+class CartItems(Base):
+    __tablename__ = 'cart_items'
 
-    username = Column(String(25), primary_key=True)
-    n = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(25), ForeignKey('users.name'), nullable=False)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
+    quantity = Column(Integer, nullable=False)
 
-    products = relationship('Products', order_by=Products.id, back_populates='category')
+    # user = relationship('Users', back_populates='cart_item')
+    # product = relationship('Products', back_populates='cart_item')

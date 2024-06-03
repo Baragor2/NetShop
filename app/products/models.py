@@ -15,4 +15,5 @@ class Products(Base):
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
     characteristics = Column(JSON, nullable=False)
 
-    category = relationship('Categories', back_populates='products')
+    category = relationship('Categories', back_populates='product')
+#    cart_item = relationship('CartItems', back_populates='product')

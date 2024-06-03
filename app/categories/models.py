@@ -11,4 +11,4 @@ class Categories(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
-    products = relationship('Products', order_by=Products.id, back_populates='category')
+    product = relationship('Products', order_by=Products.id, back_populates='category')
