@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, status
 
-from app.config import auth_jwt
 from app.users.auth import hash_password, check_exists, create_access_token, create_refresh_token
 from app.users.dao import UsersDAO
 from app.users.dependencies import authenticate_user, get_current_user, http_bearer, get_current_user_by_refresh
-from app.users.schemas import SLoginUser, SRegisterUser, Token, SUsers, SMeUser
+from app.users.schemas import SLoginUser, SRegisterUser, Token, SMeUser
 
 router = APIRouter(
     prefix="/auth",
@@ -29,7 +28,7 @@ async def register(user_data: SRegisterUser) -> dict:
 
 
 @router.post("/login", response_model=Token)
-async def login_user(user: SLoginUser = Depends(authenticate_user)):
+async def login_user(user: SLoginUser = Depends(authenticate_user)) -> Token:
     access_token = create_access_token(user)
     refresh_token = create_refresh_token(user)
     return Token(
@@ -50,7 +49,7 @@ async def read_users_me(current_user: SMeUser = Depends(get_current_user)) -> SM
 )
 async def get_new_access_token(
     user: SLoginUser = Depends(get_current_user_by_refresh)
-):
+) -> Token:
     access_token = create_access_token(user)
     return Token(
         access_token=access_token,

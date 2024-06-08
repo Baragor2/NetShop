@@ -11,7 +11,7 @@ from app.database import DATABASE_URL, Base
 from app.products.models import Products # noqa
 from app.categories.models import Categories # noqa
 from app.users.models import Users # noqa
-from app.cart.models import CartItems # noqa
+from app.cart_items.models import CartItems # noqa
 
 sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
 
