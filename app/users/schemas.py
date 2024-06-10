@@ -9,7 +9,7 @@ class SMeUser(BaseModel):
     email: Annotated[EmailStr, MaxLen(254)]
 
 
-class SUsers(SMeUser):
+class SUser(SMeUser):
     password: Annotated[bytes, MinLen(8)]
     role: Literal["admin", "user"] = "user"
     active: bool = True

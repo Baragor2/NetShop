@@ -16,19 +16,15 @@ router = APIRouter(
 async def register(user_data: SRegisterUser) -> dict:
     await check_exists(user_data)
 
-    hashed_password = hash_password(user_data.password)
-    await UsersDAO.add(
-        name=user_data.name,
-        email=user_data.email,
-        password=hashed_password,
-        active=True,
-        role="user",
-    )
+    hashed_password: bytes = hash_password(user_data.password)
+
+    await UsersDAO.add_user_and_cart(user_data, hashed_password)
+
     return {"message": "successful registration"}
 
 
 @router.post("/login", response_model=Token)
-async def login_user(user: SLoginUser = Depends(authenticate_user)) -> Token:
+async def login_user(user: SLoginUser = Depends(authenticate_user)):
     access_token = create_access_token(user)
     refresh_token = create_refresh_token(user)
     return Token(

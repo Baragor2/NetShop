@@ -1,7 +1,7 @@
 from pydantic import BaseModel, PositiveInt, PositiveFloat
 
 
-class SProducts(BaseModel):
+class SProduct(BaseModel):
     id: PositiveInt
     title: str
     description: str

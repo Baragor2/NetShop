@@ -1,6 +1,6 @@
 from pydantic import BaseModel, PositiveInt
 
 
-class SCategories(BaseModel):
+class SCategory(BaseModel):
     id: PositiveInt
     name: str

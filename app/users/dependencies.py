@@ -6,7 +6,7 @@ from app.config import auth_jwt
 from app.exceptions import IncorrectUsernameOrPasswordException, UserIsNotActiveException, InvalidTokenException
 from app.users.auth import validate_password, decode_jwt
 from app.users.dao import UsersDAO
-from app.users.schemas import SUsers, SLoginUser, SMeUser
+from app.users.schemas import SUser, SLoginUser, SMeUser
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 http_bearer = HTTPBearer(auto_error=False)
@@ -15,7 +15,7 @@ http_bearer = HTTPBearer(auto_error=False)
 async def authenticate_user(
         username: str = Form(),
         password: str = Form(),
-) -> SUsers:
+) -> SUser:
     user = await get_and_check_user(username)
 
     if not validate_password(password, user.password):
@@ -24,8 +24,8 @@ async def authenticate_user(
     return user
 
 
-async def get_and_check_user(username: str) -> SUsers:
-    user: SUsers = await UsersDAO.find_one_or_none(name=username)
+async def get_and_check_user(username: str) -> SUser:
+    user: SUser = await UsersDAO.find_one_or_none(name=username)
 
     if not user:
         raise IncorrectUsernameOrPasswordException
