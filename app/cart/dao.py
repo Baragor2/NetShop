@@ -1,4 +1,7 @@
-from pydantic import PositiveInt
+from typing import Annotated
+
+from annotated_types import MinLen, MaxLen
+from pydantic import PositiveInt, NegativeInt
 from sqlalchemy import update
 
 from app.cart.models import Carts
@@ -10,7 +13,11 @@ class CartsDAO(BaseDAO):
     model = Carts
 
     @classmethod
-    async def add_price_from_cart_item(cls, username: str, cart_item_price: PositiveInt):
+    async def change_price_from_cart_item(
+            cls,
+            username: Annotated[str, MinLen(3), MaxLen(25)],
+            cart_item_price: PositiveInt | NegativeInt
+    ) -> None:
         async with async_session_maker() as session:
             stmt = (
                 update(Carts)

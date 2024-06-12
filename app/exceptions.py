@@ -27,3 +27,13 @@ class UserAlreadyExistsException(MarketException):
 class InvalidTokenException(MarketException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = "Неверный токен"
+
+
+class NoSuchProductException(MarketException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Такого продукта не существует"
+
+
+class NoSuchProductInCartException(MarketException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Такой продукт в корзине отсутствует"

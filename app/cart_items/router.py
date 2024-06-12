@@ -28,3 +28,12 @@ async def create_cart_item(
 ) -> dict:
     await CartItemsDAO.add_cart_item(current_user.name, product_id, quantity)
     return {"message": "Product has been successfully added to cart"}
+
+
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_cart_item(
+        product_id: PositiveInt,
+        quantity: PositiveInt,
+        current_user: SMeUser = Depends(get_current_user),
+) -> None:
+    await CartItemsDAO.remove_cart_item(current_user.name, product_id, quantity)
