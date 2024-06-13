@@ -37,3 +37,8 @@ class NoSuchProductException(MarketException):
 class NoSuchProductInCartException(MarketException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "Такой продукт в корзине отсутствует"
+
+
+class NotEnoughRightsException(MarketException):
+    status_code = status.HTTP_403_FORBIDDEN
+    detail = "Недостаточно прав"

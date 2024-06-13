@@ -6,14 +6,14 @@ from app.database import async_session_maker
 from app.exceptions import NoSuchProductException
 from app.products.models import Products
 from app.dao.base import BaseDAO
-from app.products.schemas import SProduct
+from app.products.schemas import SProduct, SProductWithCategory
 
 
 class ProductsDAO(BaseDAO):
     model = Products
 
     @classmethod
-    async def get_products_with_categories(cls):
+    async def get_products_with_categories(cls) -> list[SProductWithCategory]:
         """
         SELECT * FROM products
         JOIN categories ON products.category_id = categories.id
@@ -33,3 +33,23 @@ class ProductsDAO(BaseDAO):
         if not product:
             raise NoSuchProductException
         return product
+
+    @classmethod
+    async def get_product_with_category(
+            cls,
+            product_id: PositiveInt,
+    ) -> SProductWithCategory:
+        """
+        SELECT * FROM products
+        JOIN categories ON products.category_id = categories.id
+        WHERE products.id = ?
+        """
+        async with async_session_maker() as session:
+            product_with_categories = (
+                select(Products, Categories.name)
+                .join(Categories, Products.category_id == Categories.id)
+                .where(Products.id == product_id)
+            )
+
+            result = await session.execute(product_with_categories)
+            return result.mappings().one()

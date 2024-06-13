@@ -3,17 +3,18 @@ from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from jwt import InvalidTokenError
 
 from app.config import auth_jwt
-from app.exceptions import IncorrectUsernameOrPasswordException, UserIsNotActiveException, InvalidTokenException
+from app.exceptions import IncorrectUsernameOrPasswordException, UserIsNotActiveException, InvalidTokenException, \
+    NotEnoughRightsException
 from app.users.auth import validate_password, decode_jwt
 from app.users.dao import UsersDAO
-from app.users.schemas import SUser, SLoginUser, SMeUser
+from app.users.schemas import SUser, SLoginUser, SMeUser, Username
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 http_bearer = HTTPBearer(auto_error=False)
 
 
 async def authenticate_user(
-        username: str = Form(),
+        username: Username = Form(),
         password: str = Form(),
 ) -> SUser:
     user = await get_and_check_user(username)
@@ -24,8 +25,14 @@ async def authenticate_user(
     return user
 
 
-async def get_and_check_user(username: str) -> SUser:
+async def get_and_check_user(
+        username: Username,
+        is_admin: bool = False,
+) -> SUser:
     user: SUser = await UsersDAO.find_one_or_none(name=username)
+
+    if is_admin and user.role != "admin":
+        raise NotEnoughRightsException
 
     if not user:
         raise IncorrectUsernameOrPasswordException
@@ -52,12 +59,13 @@ def check_token_type(payload: dict, token_type: str) -> None:
 
 
 async def get_current_user(
+    is_admin: bool = False,
     payload: dict = Depends(get_token_payload),
 ) -> SMeUser:
     check_token_type(payload, auth_jwt.ACCESS_TOKEN_TYPE)
 
     username: str | None = payload.get("sub")
-    user = await get_and_check_user(username)
+    user = await get_and_check_user(username, is_admin)
     return SMeUser(
         name=user.name,
         email=user.email,
@@ -65,7 +73,7 @@ async def get_current_user(
 
 
 async def get_current_user_by_refresh(
-        payload: dict = Depends(get_token_payload)
+        payload: dict = Depends(get_token_payload),
 ) -> SLoginUser:
     check_token_type(payload, auth_jwt.REFRESH_TOKEN_TYPE)
     username: str | None = payload.get("sub")

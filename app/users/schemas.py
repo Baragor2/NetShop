@@ -4,8 +4,11 @@ from annotated_types import MaxLen, MinLen
 from pydantic import BaseModel, EmailStr
 
 
+Username = Annotated[str, MinLen(3), MaxLen(25)]
+
+
 class SMeUser(BaseModel):
-    name: Annotated[str, MinLen(3), MaxLen(25)]
+    name: Username
     email: Annotated[EmailStr, MaxLen(254)]
 
 
@@ -16,7 +19,7 @@ class SUser(SMeUser):
 
 
 class SLoginUser(BaseModel):
-    name: Annotated[str, MinLen(3), MaxLen(25)]
+    name: Username
     password: Annotated[str, MinLen(8)]
 
 

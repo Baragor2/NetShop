@@ -9,3 +9,8 @@ class SProduct(BaseModel):
     image_id: PositiveInt
     category_id: PositiveInt
     characteristics: list
+
+
+class SProductWithCategory(BaseModel):
+    Products: SProduct
+    name: str

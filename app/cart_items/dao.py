@@ -1,6 +1,3 @@
-from typing import Annotated
-
-from annotated_types import MinLen, MaxLen
 from pydantic import PositiveInt, NegativeInt
 from sqlalchemy import select, and_, update, delete, Update, Delete
 
@@ -12,6 +9,7 @@ from app.exceptions import NoSuchProductInCartException
 from app.products.dao import ProductsDAO
 from app.products.models import Products
 from app.products.schemas import SProduct
+from app.users.schemas import Username
 
 
 class CartItemsDAO(BaseDAO):
@@ -114,7 +112,7 @@ class CartItemsDAO(BaseDAO):
     @classmethod
     async def remove_cart_item(
             cls,
-            current_username: Annotated[str, MinLen(3), MaxLen(25)],
+            current_username: Username,
             product_id: PositiveInt,
             quantity: PositiveInt,
     ) -> None:

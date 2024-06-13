@@ -7,6 +7,7 @@ from sqlalchemy import update
 from app.cart.models import Carts
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
+from app.users.schemas import Username
 
 
 class CartsDAO(BaseDAO):
@@ -15,7 +16,7 @@ class CartsDAO(BaseDAO):
     @classmethod
     async def change_price_from_cart_item(
             cls,
-            username: Annotated[str, MinLen(3), MaxLen(25)],
+            username: Username,
             cart_item_price: PositiveInt | NegativeInt
     ) -> None:
         async with async_session_maker() as session:
