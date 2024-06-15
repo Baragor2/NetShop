@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import PositiveInt
 
+from app.exceptions import NoSuchProductException
 from app.products.dao import ProductsDAO
 from app.products.schemas import SProductWithCategory
 

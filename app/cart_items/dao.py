@@ -1,7 +1,7 @@
 from pydantic import PositiveInt, NegativeInt
 from sqlalchemy import select, and_, update, delete, Update, Delete
 
-from app.cart.dao import CartsDAO
+from app.cart import dao as cart_dao
 from app.cart_items.models import CartItems
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
@@ -131,7 +131,7 @@ class CartItemsDAO(BaseDAO):
                     product_id,
                 )
                 await session.execute(delete_query)
-                await CartsDAO.change_price_from_cart_item(
+                await cart_dao.CartsDAO.change_price_from_cart_item(
                     current_username,
                     -(product.price * cart_item.quantity),
                 )
@@ -142,8 +142,18 @@ class CartItemsDAO(BaseDAO):
                     -quantity,
                 )
                 await session.execute(update_query)
-                await CartsDAO.change_price_from_cart_item(
+                await cart_dao.CartsDAO.change_price_from_cart_item(
                     current_username,
                     -(product.price * quantity)
                 )
+            await session.commit()
+
+    @classmethod
+    async def remove_all_cart_items_by_username(cls, username: Username) -> None:
+        async with async_session_maker() as session:
+            remove_cart_items_stmt = (
+                delete(CartItems)
+                .where(CartItems.username == username)
+            )
+            await session.execute(remove_cart_items_stmt)
             await session.commit()

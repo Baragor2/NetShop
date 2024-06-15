@@ -27,12 +27,8 @@ async def authenticate_user(
 
 async def get_and_check_user(
         username: Username,
-        is_admin: bool = False,
 ) -> SUser:
     user: SUser = await UsersDAO.find_one_or_none(name=username)
-
-    if is_admin and user.role != "admin":
-        raise NotEnoughRightsException
 
     if not user:
         raise IncorrectUsernameOrPasswordException
@@ -41,6 +37,14 @@ async def get_and_check_user(
         raise UserIsNotActiveException
 
     return user
+
+
+async def check_role(
+        user: SUser,
+        is_admin: bool = False,
+) -> None:
+    if is_admin and user.role != "admin":
+        raise NotEnoughRightsException
 
 
 async def get_token_payload(token: str = Depends(oauth2_scheme)) -> dict:
@@ -59,13 +63,12 @@ def check_token_type(payload: dict, token_type: str) -> None:
 
 
 async def get_current_user(
-    is_admin: bool = False,
     payload: dict = Depends(get_token_payload),
 ) -> SMeUser:
     check_token_type(payload, auth_jwt.ACCESS_TOKEN_TYPE)
 
     username: str | None = payload.get("sub")
-    user = await get_and_check_user(username, is_admin)
+    user = await get_and_check_user(username)
     return SMeUser(
         name=user.name,
         email=user.email,

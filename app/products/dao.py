@@ -1,5 +1,6 @@
 from pydantic import PositiveInt
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 
 from app.categories.models import Categories
 from app.database import async_session_maker
@@ -45,11 +46,14 @@ class ProductsDAO(BaseDAO):
         WHERE products.id = ?
         """
         async with async_session_maker() as session:
-            product_with_categories = (
+            product_with_category = (
                 select(Products, Categories.name)
                 .join(Categories, Products.category_id == Categories.id)
                 .where(Products.id == product_id)
             )
+            result = await session.execute(product_with_category)
 
-            result = await session.execute(product_with_categories)
-            return result.mappings().one()
+            try:
+                return result.mappings().one()
+            except NoResultFound:
+                raise NoSuchProductException
