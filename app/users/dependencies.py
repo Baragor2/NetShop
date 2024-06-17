@@ -40,9 +40,10 @@ async def get_and_check_user(
 
 
 async def check_role(
-        user: SUser,
+        username: Username,
         is_admin: bool = False,
 ) -> None:
+    user = await UsersDAO.find_one_or_none(name=username)
     if is_admin and user.role != "admin":
         raise NotEnoughRightsException
 

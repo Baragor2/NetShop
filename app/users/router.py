@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, status
 
 from app.users.auth import hash_password, check_exists, create_access_token, create_refresh_token
 from app.users.dao import UsersDAO
-from app.users.dependencies import authenticate_user, get_current_user, http_bearer, get_current_user_by_refresh
-from app.users.schemas import SLoginUser, SRegisterUser, Token, SMeUser
+from app.users.dependencies import authenticate_user, get_current_user, http_bearer, get_current_user_by_refresh, \
+    check_role
+from app.users.schemas import SLoginUser, SRegisterUser, Token, SMeUser, Username
 
 router = APIRouter(
     prefix="/auth",
@@ -50,3 +51,13 @@ async def get_new_access_token(
     return Token(
         access_token=access_token,
     )
+
+
+@router.patch("/ban/{username}")
+async def ban_user(
+        username: Username,
+        current_user: SMeUser = Depends(get_current_user),
+) -> dict[str, str]:
+    await check_role(current_user.name, True)
+    await UsersDAO.deactivate_user(username)
+    return {"message": "successful ban operation"}

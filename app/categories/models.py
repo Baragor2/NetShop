@@ -12,3 +12,6 @@ class Categories(Base):
     name = Column(String, nullable=False)
 
     product = relationship('Products', order_by=Products.id, back_populates='category')
+
+    def __str__(self):
+        return f"Категория: {self.name}"

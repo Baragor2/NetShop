@@ -12,5 +12,8 @@ class CartItems(Base):
     product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
 
-    # user = relationship('Users', back_populates='cart_item')
-    # product = relationship('Products', back_populates='cart_item')
+    user = relationship('Users', back_populates='cart_item')
+    product = relationship('Products', back_populates='cart_item')
+
+    def __str__(self):
+        return f"Продукт корзины: id - {self.id}"

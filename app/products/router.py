@@ -21,3 +21,8 @@ async def get_products() -> list[SProductWithCategory]:
 async def get_product(product_id: PositiveInt) -> SProductWithCategory:
     product_with_category = await ProductsDAO.get_product_with_category(product_id)
     return product_with_category
+
+
+@router.get("{category_name")
+async def get_products_by_category(category_name: str) -> list[SProductWithCategory]:
+    products_with_categories

@@ -16,4 +16,7 @@ class Products(Base):
     characteristics = Column(JSON, nullable=False)
 
     category = relationship('Categories', back_populates='product')
-#    cart_item = relationship('CartItems', back_populates='product')
+    cart_item = relationship('CartItems', back_populates='product')
+
+    def __str__(self):
+        return f"Продукт: {self.id} - {self.title}"

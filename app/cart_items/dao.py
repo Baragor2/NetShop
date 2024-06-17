@@ -106,7 +106,7 @@ class CartItemsDAO(BaseDAO):
                 )
                 await session.execute(update_query)
 
-            await CartsDAO.change_price_from_cart_item(current_username, product.price * quantity)
+            await cart_dao.CartsDAO.change_price_from_cart_item(current_username, product.price * quantity)
             await session.commit()
 
     @classmethod

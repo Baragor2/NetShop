@@ -13,4 +13,8 @@ class Users(Base):
     role = Column(String, nullable=False)
     active = Column(Boolean, nullable=False)
 
-#    cart_item = relationship('CartItems', back_populates='user')
+    cart_item = relationship('CartItems', back_populates='user')
+    cart = relationship("Carts", back_populates="user")
+
+    def __str__(self):
+        return f"Пользователь: {self.name}"
