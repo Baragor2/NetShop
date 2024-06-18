@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from pydantic import PositiveInt
 
-from app.exceptions import NoSuchProductException
 from app.products.dao import ProductsDAO
 from app.products.schemas import SProductWithCategory
 
@@ -17,12 +16,7 @@ async def get_products() -> list[SProductWithCategory]:
     return products_with_categories
 
 
-@router.get("{product_id}")
+@router.get("/{product_id}")
 async def get_product(product_id: PositiveInt) -> SProductWithCategory:
     product_with_category = await ProductsDAO.get_product_with_category(product_id)
     return product_with_category
-
-
-@router.get("{category_name")
-async def get_products_by_category(category_name: str) -> list[SProductWithCategory]:
-    products_with_categories

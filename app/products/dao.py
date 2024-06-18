@@ -57,3 +57,20 @@ class ProductsDAO(BaseDAO):
                 return result.mappings().one()
             except NoResultFound:
                 raise NoSuchProductException
+
+    @classmethod
+    async def get_products_by_categories(cls, category_name: str) -> list[SProductWithCategory | None]:
+        """
+        SELECT * FROM products
+        JOIN categories ON products.category_id = categories.id
+        WHERE categories.name = ?
+        """
+        async with async_session_maker() as session:
+            products_with_categories = (
+                select(Products, Categories.name)
+                .join(Categories, Products.category_id == Categories.id)
+                .where(Categories.name == category_name)
+            )
+
+            result = await session.execute(products_with_categories)
+            return result.mappings().all()

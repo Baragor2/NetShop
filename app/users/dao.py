@@ -1,5 +1,4 @@
 from sqlalchemy import update
-from sqlalchemy.testing.pickleable import User
 
 from app.cart.dao import CartsDAO
 from app.database import async_session_maker

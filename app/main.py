@@ -7,6 +7,7 @@ from app.users.router import router as router_users
 from app.products.router import router as router_products
 from app.cart_items.router import router as router_cart_items
 from app.cart.router import router as router_cart
+from app.categories.router import router as router_categories
 
 app = FastAPI()
 
@@ -14,6 +15,7 @@ app.include_router(router_users)
 app.include_router(router_products)
 app.include_router(router_cart_items)
 app.include_router(router_cart)
+app.include_router(router_categories)
 
 admin = Admin(app, engine)
 
