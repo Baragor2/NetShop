@@ -1,5 +1,5 @@
 from pydantic import PositiveInt
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.exc import NoResultFound
 
 from app.categories.models import Categories
@@ -74,3 +74,16 @@ class ProductsDAO(BaseDAO):
 
             result = await session.execute(products_with_categories)
             return result.mappings().all()
+
+    @classmethod
+    async def delete_product(cls, product_id: PositiveInt) -> None:
+        await cls.get_product(product_id)
+
+        async with async_session_maker() as session:
+            delete_product_stmt = (
+                delete(Products)
+                .where(Products.id == product_id)
+            )
+
+            await session.execute(delete_product_stmt)
+            await session.commit()

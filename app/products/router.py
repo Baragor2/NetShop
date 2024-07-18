@@ -26,3 +26,8 @@ async def get_product(product_id: PositiveInt) -> SProductWithCategory:
 async def create_product(product: SProduct) -> dict[str, str]:
     await ProductsDAO.add(**dict(product))
     return {"message": "Product created"}
+
+
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_product(product_id: PositiveInt) -> None:
+    await ProductsDAO.delete_product(product_id)
