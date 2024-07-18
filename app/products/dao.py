@@ -8,6 +8,8 @@ from app.exceptions import NoSuchProductException
 from app.products.models import Products
 from app.dao.base import BaseDAO
 from app.products.schemas import SProduct, SProductWithCategory
+from app.users.dependencies import check_admin_role
+from app.users.schemas import Username
 
 
 class ProductsDAO(BaseDAO):
@@ -87,3 +89,11 @@ class ProductsDAO(BaseDAO):
 
             await session.execute(delete_product_stmt)
             await session.commit()
+
+    @classmethod
+    async def create_product(cls, product: SProduct, username: Username):
+        from app.categories.router import get_category
+
+        await get_category(product.category_id)
+        await check_admin_role(username)
+        await ProductsDAO.add(**dict(product))

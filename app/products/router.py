@@ -29,8 +29,7 @@ async def create_product(
         product: SProduct,
         current_user: SMeUser = Depends(get_current_user),
 ) -> dict[str, str]:
-    await check_admin_role(current_user.name)
-    await ProductsDAO.add(**dict(product))
+    await ProductsDAO.create_product(product, current_user.name)
     return {"message": "Product created"}
 
 
