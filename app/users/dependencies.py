@@ -5,8 +5,7 @@ from jwt import InvalidTokenError
 from app.config import auth_jwt
 from app.exceptions import IncorrectUsernameOrPasswordException, UserIsNotActiveException, InvalidTokenException, \
     NotEnoughRightsException
-from app.users.auth import validate_password, decode_jwt
-from app.users.dao import UsersDAO
+from app.users import auth
 from app.users.schemas import SUser, SLoginUser, SMeUser, Username
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -19,7 +18,7 @@ async def authenticate_user(
 ) -> SUser:
     user = await get_and_check_user(username)
 
-    if not validate_password(password, user.password):
+    if not auth.validate_password(password, user.password):
         raise IncorrectUsernameOrPasswordException
 
     return user
@@ -28,6 +27,8 @@ async def authenticate_user(
 async def get_and_check_user(
         username: Username,
 ) -> SUser:
+    from app.users.dao import UsersDAO
+
     user: SUser = await UsersDAO.find_one_or_none(name=username)
 
     if not user:
@@ -41,7 +42,7 @@ async def get_and_check_user(
 
 async def get_token_payload(token: str = Depends(oauth2_scheme)) -> dict:
     try:
-        payload = decode_jwt(token=token)
+        payload = auth.decode_jwt(token=token)
     except InvalidTokenError:
         raise InvalidTokenException
 
@@ -80,6 +81,8 @@ async def get_current_user_by_refresh(
 
 
 async def check_admin_role(username: Username) -> None:
+    from app.users.dao import UsersDAO
+
     user: SUser = await UsersDAO.find_one_or_none(name=username)
     if user.role != "admin":
         raise NotEnoughRightsException
