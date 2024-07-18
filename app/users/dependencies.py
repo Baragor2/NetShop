@@ -39,15 +39,6 @@ async def get_and_check_user(
     return user
 
 
-async def check_role(
-        username: Username,
-        is_admin: bool = False,
-) -> None:
-    user = await UsersDAO.find_one_or_none(name=username)
-    if is_admin and user.role != "admin":
-        raise NotEnoughRightsException
-
-
 async def get_token_payload(token: str = Depends(oauth2_scheme)) -> dict:
     try:
         payload = decode_jwt(token=token)
@@ -86,3 +77,9 @@ async def get_current_user_by_refresh(
         name=user.name,
         password=user.password,
     )
+
+
+async def check_admin_role(username: Username) -> None:
+    user: SUser = await UsersDAO.find_one_or_none(name=username)
+    if user.role != "admin":
+        raise NotEnoughRightsException

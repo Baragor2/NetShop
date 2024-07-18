@@ -1,8 +1,10 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from pydantic import PositiveInt
 
 from app.products.dao import ProductsDAO
 from app.products.schemas import SProductWithCategory, SProduct
+from app.users.dependencies import check_admin_role, get_current_user
+from app.users.schemas import SMeUser
 
 router = APIRouter(
     prefix="/products",
@@ -23,11 +25,19 @@ async def get_product(product_id: PositiveInt) -> SProductWithCategory:
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_product(product: SProduct) -> dict[str, str]:
+async def create_product(
+        product: SProduct,
+        current_user: SMeUser = Depends(get_current_user),
+) -> dict[str, str]:
+    await check_admin_role(current_user.name)
     await ProductsDAO.add(**dict(product))
     return {"message": "Product created"}
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(product_id: PositiveInt) -> None:
+async def delete_product(
+        product_id: PositiveInt,
+        current_user: SMeUser = Depends(get_current_user),
+) -> None:
+    await check_admin_role(current_user.name)
     await ProductsDAO.delete_product(product_id)
