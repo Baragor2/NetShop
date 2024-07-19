@@ -1,5 +1,5 @@
 from pydantic import PositiveInt
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from sqlalchemy.exc import NoResultFound
 
 from app.categories.models import Categories
@@ -10,6 +10,7 @@ from app.dao.base import BaseDAO
 from app.products.schemas import SProduct, SProductWithCategory
 from app.users.dependencies import check_admin_role
 from app.users.schemas import Username
+from app.categories.dao import CategoriesDAO
 
 
 class ProductsDAO(BaseDAO):
@@ -92,8 +93,21 @@ class ProductsDAO(BaseDAO):
 
     @classmethod
     async def create_product(cls, product: SProduct, username: Username):
-        from app.categories.router import get_category
-
-        await get_category(product.category_id)
+        await CategoriesDAO.get_category(product.category_id)
         await check_admin_role(username)
         await ProductsDAO.add(**dict(product))
+
+    @classmethod
+    async def update_product(cls, product: SProduct):
+        await cls.get_product(product.id)
+        await CategoriesDAO.get_category(product.category_id)
+
+        async with async_session_maker() as session:
+            update_product_stmt = (
+                update(Products)
+                .where(Products.id == product.id)
+                .values(**dict(product))
+            )
+
+        await session.execute(update_product_stmt)
+        await session.commit()

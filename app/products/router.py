@@ -40,3 +40,14 @@ async def delete_product(
 ) -> None:
     await check_admin_role(current_user.name)
     await ProductsDAO.delete_product(product_id)
+
+
+@router.put("/")
+async def update_product(
+        product: SProduct,
+        current_user: SMeUser = Depends(get_current_user),
+) -> dict[str, str]:
+    await check_admin_role(current_user.name)
+
+    await ProductsDAO.update_product(product)
+    return {"message": "Product updated"}
