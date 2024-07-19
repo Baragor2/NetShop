@@ -8,7 +8,7 @@ from app.users.schemas import SMeUser
 
 router = APIRouter(
     prefix="/cart_items",
-    tags=["cart Items"],
+    tags=["Cart Items"],
 )
 
 
