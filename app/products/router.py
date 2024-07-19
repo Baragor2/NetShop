@@ -24,6 +24,13 @@ async def get_product(product_id: PositiveInt) -> SProductWithCategory:
     return product_with_category
 
 
+@router.get("/categories/{category_name}")
+async def get_products_by_category(category_name: str) -> list[SProductWithCategory]:
+    category_name = category_name[0].upper() + category_name[1:].lower()
+    products_with_categories = await ProductsDAO.get_products_by_categories(category_name)
+    return products_with_categories
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_product(
         product: SProduct,

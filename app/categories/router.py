@@ -19,12 +19,6 @@ async def get_categories() -> list[SCategory]:
     return categories
 
 
-# @router.get("/{category_name}")
-# async def get_products_by_category(category_name: str) -> list[SProductWithCategory]:
-#     products_with_categories = await ProductsDAO.get_products_by_categories(category_name)
-#     return products_with_categories
-
-
 @router.get("/{category_id}")
 async def get_category(category_id: int) -> SCategory:
     category = await CategoriesDAO.get_category(category_id)
