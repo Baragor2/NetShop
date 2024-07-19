@@ -1,11 +1,7 @@
 from fastapi import APIRouter, Depends
-from fastapi.exceptions import ResponseValidationError
 
 from app.categories.dao import CategoriesDAO
 from app.categories.schemas import SCategory
-from app.exceptions import NoSuchCategoryException
-from app.products.dao import ProductsDAO
-from app.products.schemas import SProductWithCategory
 from app.users.dependencies import get_current_user
 from app.users.schemas import SUser
 
