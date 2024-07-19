@@ -27,8 +27,5 @@ async def get_categories() -> list[SCategory]:
 
 @router.get("/{category_id}")
 async def get_category(category_id: int) -> SCategory:
-    category = await CategoriesDAO.find_one_or_none(id=category_id)
-    if not category:
-        raise NoSuchCategoryException
-
+    category = await CategoriesDAO.get_category(category_id)
     return category
