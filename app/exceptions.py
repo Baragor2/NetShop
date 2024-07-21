@@ -47,3 +47,8 @@ class NotEnoughRightsException(MarketException):
 class NoSuchCategoryException(MarketException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "Такой категории не существует"
+
+
+class ProductsWithSuchCategoryException(MarketException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "С этой категорией существуют продукты"
