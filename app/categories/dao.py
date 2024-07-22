@@ -1,5 +1,5 @@
 from pydantic import PositiveInt
-from sqlalchemy import delete
+from sqlalchemy import delete, update
 
 from app.categories.models import Categories
 from app.categories.schemas import SCategory
@@ -42,4 +42,18 @@ class CategoriesDAO(BaseDAO):
             )
 
         await session.execute(delete_category_stmt)
+        await session.commit()
+
+    @classmethod
+    async def change_name(cls, category_id: PositiveInt, new_name: str) -> None:
+        await cls.get_category(category_id)
+
+        async with async_session_maker() as session:
+            update_name_stmt = (
+                update(Categories)
+                .where(Categories.id == category_id)
+                .values(name=new_name)
+            )
+
+        await session.execute(update_name_stmt)
         await session.commit()

@@ -41,3 +41,14 @@ async def delete_category(
 ) -> None:
     await check_admin_role(current_user.name)
     await CategoriesDAO.delete_category(category_id)
+
+
+@router.patch("/{category_id}")
+async def change_category_name(
+        category_id: PositiveInt,
+        new_name: str,
+        current_user: SUser = Depends(get_current_user),
+) -> dict[str, str]:
+    await check_admin_role(current_user.name)
+    await CategoriesDAO.change_name(category_id, new_name)
+    return {"message": "Category updated"}
